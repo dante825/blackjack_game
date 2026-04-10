@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackjack</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Header -->
+    <header>
+      <span class="logo">♠ BLACKJACK ♠</span>
+      <div class="bankroll-wrap">
+        <span class="bankroll-label">BANKROLL</span>
+        <span id="bankroll">1000</span>
+      </div>
+    </header>
+
+    <!-- Table -->
+    <main id="table">
+
+      <!-- Dealer section -->
+      <section id="dealer-section">
+        <div class="section-label">
+          DEALER
+          <span id="dealer-value-badge" class="value-badge hidden"></span>
+        </div>
+        <div id="dealer-cards" class="card-row"></div>
+      </section>
+
+      <div class="felt-divider"></div>
+
+      <!-- Player section -->
+      <section id="player-section">
+        <div id="player-hands-container"></div>
+
+        <!-- Action buttons (visible during player_turn) -->
+        <div id="action-buttons" class="hidden">
+          <button id="btn-hit"    class="action-btn" onclick="doAction('hit')">HIT</button>
+          <button id="btn-stand"  class="action-btn" onclick="doAction('stand')">STAND</button>
+          <button id="btn-double" class="action-btn" onclick="doAction('double')">DOUBLE</button>
+          <button id="btn-split"  class="action-btn" onclick="doAction('split')">SPLIT</button>
+        </div>
+
+        <!-- Round-over buttons -->
+        <div id="round-over-buttons" class="hidden">
+          <button class="round-btn" onclick="nextRound()">NEXT ROUND</button>
+          <button class="round-btn secondary" onclick="newGame()">NEW GAME</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Betting area (visible during betting) -->
+    <div id="betting-area">
+      <div id="chip-row">
+        <button class="chip c5"   onclick="addChip(5)">$5</button>
+        <button class="chip c25"  onclick="addChip(25)">$25</button>
+        <button class="chip c50"  onclick="addChip(50)">$50</button>
+        <button class="chip c100" onclick="addChip(100)">$100</button>
+        <button class="chip c500" onclick="addChip(500)">$500</button>
+      </div>
+      <div id="bet-controls">
+        <span id="staged-label">Bet: <strong id="staged-amount">$0</strong></span>
+        <button class="bet-ctrl-btn" onclick="clearBet()">CLEAR</button>
+        <button class="bet-ctrl-btn primary" id="btn-place-bet" onclick="placeBet()">DEAL</button>
+      </div>
+    </div>
+
+    <!-- Result banner (visible during round_over) -->
+    <div id="result-banner" class="hidden">
+      <div id="result-rows"></div>
+      <div id="round-net-line"></div>
+    </div>
+
+    <!-- Message bar -->
+    <div id="message-bar">
+      <span id="message">Loading…</span>
+    </div>
+
+  </div><!-- #app -->
+
+  <script src="/static/game.js"></script>
+</body>
+</html>

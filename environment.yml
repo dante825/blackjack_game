@@ -1,0 +1,8 @@
+name: blackjack
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - flask==3.0.3
