@@ -8,6 +8,7 @@ STATE: dict = {}
 # ── State helpers ────────────────────────────────────────────────────────────
 
 def _init(bankroll: int = 1000) -> None:
+    prev_charlie = STATE.get("five_card_charlie", False)
     STATE.clear()
     STATE.update({
         "shoe": bj.build_deck(),
@@ -21,6 +22,7 @@ def _init(bankroll: int = 1000) -> None:
         "results": [],
         "round_net": None,
         "message": "Place your bet to start.",
+        "five_card_charlie": prev_charlie,
     })
 
 
@@ -83,6 +85,7 @@ def _serialize() -> dict:
         "results": STATE["results"],
         "message": STATE["message"],
         "round_net": STATE["round_net"],
+        "five_card_charlie": STATE.get("five_card_charlie", False),
     }
 
 
@@ -93,13 +96,15 @@ def _advance() -> None:
     idx = STATE["active_hand_index"]
     ph = STATE["player_hands"][idx]
 
-    # Auto-resolve bust / 21 on active hand
+    # Auto-resolve bust / 21 / charlie on active hand
     if ph["status"] == "active":
         val = bj.hand_value(ph["hand"])
         if val > 21:
             ph["status"] = "bust"
         elif val == 21:
             ph["status"] = "stood"
+        elif STATE.get("five_card_charlie") and len(ph["hand"]) >= 5:
+            ph["status"] = "charlie"
 
     if ph["status"] == "active":
         return  # player still deciding
@@ -140,9 +145,12 @@ def _resolve() -> None:
     total_net = 0
 
     for ph in STATE["player_hands"]:
-        # Split hands cannot be paid as natural blackjack (casino rule)
-        is_bj = bj.is_blackjack(ph["hand"]) and not ph.get("from_split", False)
-        net, outcome = bj.resolve_hand(ph["hand"], STATE["dealer_hand"], ph["bet"], is_bj=is_bj)
+        if ph["status"] == "charlie":
+            net, outcome = ph["bet"], "5 card charlie"
+        else:
+            # Split hands cannot be paid as natural blackjack (casino rule)
+            is_bj = bj.is_blackjack(ph["hand"]) and not ph.get("from_split", False)
+            net, outcome = bj.resolve_hand(ph["hand"], STATE["dealer_hand"], ph["bet"], is_bj=is_bj)
         STATE["bankroll"] += ph["bet"] + net   # return staked bet + net delta
         total_net += net
         STATE["results"].append({"outcome": outcome, "net_change": net})
@@ -292,6 +300,14 @@ def action():
     return jsonify(_serialize())
 
 
+@app.route("/api/toggle_charlie", methods=["POST"])
+def toggle_charlie():
+    if not STATE:
+        _init()
+    STATE["five_card_charlie"] = not STATE.get("five_card_charlie", False)
+    return jsonify(_serialize())
+
+
 if __name__ == "__main__":
     _init()
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

@@ -28,6 +28,14 @@ function renderState(state) {
   // Bankroll
   document.getElementById('bankroll').textContent = state.bankroll.toLocaleString();
 
+  // Rulebook: charlie toggle + payout row + note
+  const charlieToggle = document.getElementById('charlie-toggle');
+  if (charlieToggle) {
+    charlieToggle.checked = state.five_card_charlie;
+    document.getElementById('charlie-payout-row').classList.toggle('hidden', !state.five_card_charlie);
+    document.getElementById('charlie-note').classList.toggle('hidden', !state.five_card_charlie);
+  }
+
   // Dealer cards
   renderDealerCards(state.dealer);
 
@@ -133,6 +141,7 @@ function makeStatusTag(status) {
     stood:     ['tag-stood',     'STAND'],
     doubled:   ['tag-doubled',   'DOUBLED'],
     blackjack: ['tag-blackjack', 'BLACKJACK'],
+    charlie:   ['tag-charlie',   '5♣ CHARLIE'],
     waiting:   ['tag-stood',     'WAITING'],
   };
   if (!map[status]) return '';
@@ -159,7 +168,8 @@ function renderResults(results, roundNet, bankroll) {
 }
 
 function pillClass(outcome, netChange) {
-  if (outcome === 'blackjack') return 'blackjack';
+  if (outcome === 'blackjack')     return 'blackjack';
+  if (outcome === '5 card charlie') return 'charlie';
   if (netChange > 0)  return 'win';
   if (netChange < 0)  return 'loss';
   return 'push';
@@ -221,6 +231,10 @@ async function nextRound() {
 
 async function newGame() {
   await api('/api/new_game', 'POST');
+}
+
+async function toggleCharlie() {
+  await api('/api/toggle_charlie', 'POST');
 }
 
 // ── Utilities ─────────────────────────────────────────────────────────────────

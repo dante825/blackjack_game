@@ -26,10 +26,18 @@ body {
 
 #app {
   width: 100%;
-  max-width: 780px;
+  max-width: 1060px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+#game-area {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 /* ── Header ───────────────────────────────────────────────────── */
@@ -427,6 +435,113 @@ header {
   color: rgba(255,255,255,0.85);
   letter-spacing: 0.05em;
 }
+
+/* ── Rulebook Sidebar ─────────────────────────────────────────── */
+#rulebook {
+  width: 210px;
+  flex-shrink: 0;
+  background: rgba(0,0,0,0.28);
+  border-left: 1px solid rgba(255,255,255,0.1);
+  padding: 20px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rulebook-title {
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  font-weight: bold;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(201,162,39,0.35);
+}
+
+.rule-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rule-section-head {
+  font-size: 0.58rem;
+  letter-spacing: 0.18em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.rule-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.75);
+  gap: 6px;
+}
+
+.rule-val {
+  font-weight: bold;
+  color: rgba(255,255,255,0.9);
+  white-space: nowrap;
+}
+
+.rule-val.gold { color: var(--gold); }
+
+.rule-toggle-row {
+  align-items: center;
+}
+
+.rule-note {
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.4;
+  margin-top: 2px;
+}
+
+/* ── Toggle Switch ────────────────────────────────────────────── */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 21px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.18);
+  border-radius: 21px;
+  transition: background 0.25s;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  height: 15px;
+  width: 15px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s;
+}
+
+input:checked + .toggle-slider { background: var(--gold); }
+input:checked + .toggle-slider::before { transform: translateX(17px); }
+
+/* ── Charlie tag & pill ───────────────────────────────────────── */
+.tag-charlie { background: #16a085; color: #fff; }
+.result-pill.charlie { background: #16a085; color: #fff; }
 
 /* ── Utility ──────────────────────────────────────────────────── */
 .hidden { display: none !important; }
