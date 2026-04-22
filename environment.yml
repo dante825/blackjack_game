@@ -7,4 +7,5 @@ dependencies:
   - pip:
       - flask==3.0.3
       - flask-socketio==5.3.6
-      - simple-websocket==1.0.0
+      - gevent==24.11.1
+      - gevent-websocket==0.10.1
