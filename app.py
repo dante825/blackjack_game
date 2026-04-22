@@ -28,14 +28,19 @@ def _room_init():
 
 _room_init()
 
+PLAYER_BANKROLLS: dict = {}  # name → bankroll, persists across disconnects within a session
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _make_seat(sid, name):
+    bankroll = PLAYER_BANKROLLS.get(name, 1000)
+    if bankroll <= 0:
+        bankroll = 1000
     return {
         "sid": sid,
         "name": name,
-        "bankroll": 1000,
+        "bankroll": bankroll,
         "bet": 0,
         "hands": [],
         "active_hand_index": 0,
@@ -311,6 +316,8 @@ def on_disconnect():
         and ROOM["seat_order"][ROOM["active_seat_index"]] == seat_id
     )
 
+    seat = ROOM["seats"][seat_id]
+    PLAYER_BANKROLLS[seat["name"]] = seat["bankroll"]
     del ROOM["seats"][seat_id]
     ROOM["seat_order"].remove(seat_id)
     if ROOM["active_seat_index"] >= len(ROOM["seat_order"]):
