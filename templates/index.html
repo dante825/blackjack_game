@@ -7,7 +7,21 @@
   <link rel="stylesheet" href="/static/style.css" />
 </head>
 <body>
-  <div id="app">
+
+  <!-- Lobby overlay — shown until player joins -->
+  <div id="lobby">
+    <div id="lobby-card">
+      <div class="lobby-logo">♠ BLACKJACK ♠</div>
+      <div class="lobby-subtitle">Multiplayer · Up to 5 players</div>
+      <input id="name-input" class="lobby-input" type="text"
+             maxlength="20" placeholder="Your name" autocomplete="off" />
+      <button class="lobby-btn" onclick="joinTable()">JOIN TABLE</button>
+      <div id="lobby-error" class="lobby-error hidden"></div>
+    </div>
+  </div>
+
+  <!-- Main game — hidden until joined -->
+  <div id="app" class="hidden">
 
     <!-- Game area -->
     <div id="game-area">
@@ -15,9 +29,12 @@
       <!-- Header -->
       <header>
         <span class="logo">♠ BLACKJACK ♠</span>
-        <div class="bankroll-wrap">
-          <span class="bankroll-label">BANKROLL</span>
-          <span id="bankroll">1000</span>
+        <div class="header-right">
+          <button class="rules-btn" onclick="openRules()">RULES</button>
+          <div class="bankroll-wrap">
+            <span class="bankroll-label">MY BANKROLL</span>
+            <span id="bankroll">—</span>
+          </div>
         </div>
       </header>
 
@@ -35,29 +52,13 @@
 
         <div class="felt-divider"></div>
 
-        <!-- Player section -->
-        <section id="player-section">
-          <div id="player-hands-container"></div>
-
-          <!-- Action buttons (visible during player_turn) -->
-          <div id="action-buttons" class="hidden">
-            <button id="btn-hit"    class="action-btn" onclick="doAction('hit')">HIT</button>
-            <button id="btn-stand"  class="action-btn" onclick="doAction('stand')">STAND</button>
-            <button id="btn-double" class="action-btn" onclick="doAction('double')">DOUBLE</button>
-            <button id="btn-split"  class="action-btn" onclick="doAction('split')">SPLIT</button>
-          </div>
-
-          <!-- Round-over buttons -->
-          <div id="round-over-buttons" class="hidden">
-            <button class="round-btn" onclick="nextRound()">NEXT ROUND</button>
-            <button class="round-btn secondary" onclick="newGame()">NEW GAME</button>
-          </div>
-        </section>
+        <!-- Seats row — all players -->
+        <section id="seats-row"></section>
 
       </main>
 
-      <!-- Betting area (visible during betting) -->
-      <div id="betting-area">
+      <!-- Betting area (shown to me during betting phase when I haven't bet yet) -->
+      <div id="betting-area" class="hidden">
         <div id="chip-row">
           <button class="chip c5"   onclick="addChip(5)">$5</button>
           <button class="chip c25"  onclick="addChip(25)">$25</button>
@@ -68,45 +69,53 @@
         <div id="bet-controls">
           <span id="staged-label">Bet: <strong id="staged-amount">$0</strong></span>
           <button class="bet-ctrl-btn" onclick="clearBet()">CLEAR</button>
-          <button class="bet-ctrl-btn primary" id="btn-place-bet" onclick="placeBet()">DEAL</button>
+          <button class="bet-ctrl-btn primary" onclick="placeBet()">DEAL</button>
         </div>
       </div>
 
-      <!-- Result banner (visible during round_over) -->
-      <div id="result-banner" class="hidden">
-        <div id="result-rows"></div>
-        <div id="round-net-line"></div>
+      <!-- Action buttons (shown to me on my turn) -->
+      <div id="action-buttons" class="hidden">
+        <button id="btn-hit"    class="action-btn" onclick="doAction('hit')">HIT</button>
+        <button id="btn-stand"  class="action-btn" onclick="doAction('stand')">STAND</button>
+        <button id="btn-double" class="action-btn" onclick="doAction('double')">DOUBLE</button>
+        <button id="btn-split"  class="action-btn" onclick="doAction('split')">SPLIT</button>
+      </div>
+
+      <!-- Round-over area -->
+      <div id="round-over-area" class="hidden">
+        <div id="result-banner">
+          <div id="result-rows"></div>
+          <div id="round-net-line"></div>
+        </div>
+        <div id="round-over-buttons">
+          <button class="round-btn" onclick="newRound()">NEW ROUND</button>
+          <button class="round-btn secondary" onclick="leaveTable()">LEAVE TABLE</button>
+        </div>
       </div>
 
       <!-- Message bar -->
       <div id="message-bar">
-        <span id="message">Loading…</span>
+        <span id="message">Connecting…</span>
       </div>
 
     </div><!-- #game-area -->
 
-    <!-- Rulebook sidebar -->
-    <aside id="rulebook">
-      <div class="rulebook-title">HOUSE RULES</div>
+  </div><!-- #app -->
+
+  <!-- Rules modal -->
+  <div id="rules-modal" class="modal-overlay hidden" onclick="closeRulesOnBackdrop(event)">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span class="modal-title">HOUSE RULES</span>
+        <button class="modal-close" onclick="closeRules()">✕</button>
+      </div>
 
       <div class="rule-section">
         <div class="rule-section-head">PAYOUTS</div>
-        <div class="rule-row">
-          <span>Blackjack</span>
-          <span class="rule-val gold">3 : 2</span>
-        </div>
-        <div class="rule-row">
-          <span>Win</span>
-          <span class="rule-val">1 : 1</span>
-        </div>
-        <div class="rule-row">
-          <span>Push</span>
-          <span class="rule-val">0</span>
-        </div>
-        <div id="charlie-payout-row" class="rule-row hidden">
-          <span>5 Card Charlie</span>
-          <span class="rule-val gold">1 : 1</span>
-        </div>
+        <div class="rule-row"><span>Blackjack</span><span class="rule-val gold">3 : 2</span></div>
+        <div class="rule-row"><span>Win</span><span class="rule-val">1 : 1</span></div>
+        <div class="rule-row"><span>Push</span><span class="rule-val">0</span></div>
+        <div class="rule-row"><span>5 Card Charlie</span><span class="rule-val gold">1 : 1</span></div>
       </div>
 
       <div class="rule-section">
@@ -117,44 +126,22 @@
 
       <div class="rule-section">
         <div class="rule-section-head">PLAYER</div>
-        <div class="rule-row">
-          <span>Double down</span>
-          <span class="rule-val">2 cards</span>
-        </div>
-        <div class="rule-row">
-          <span>Split</span>
-          <span class="rule-val">pairs</span>
-        </div>
+        <div class="rule-row"><span>Double down</span><span class="rule-val">2 cards</span></div>
+        <div class="rule-row"><span>Split</span><span class="rule-val">pairs</span></div>
         <div class="rule-row"><span>No re-split</span></div>
-        <div class="rule-row">
-          <span>Split BJ pays</span>
-          <span class="rule-val">1 : 1</span>
-        </div>
+        <div class="rule-row"><span>Split BJ pays</span><span class="rule-val">1 : 1</span></div>
+        <div class="rule-row"><span>5 Card Charlie</span><span class="rule-val">5 cards, no bust</span></div>
       </div>
 
       <div class="rule-section">
         <div class="rule-section-head">SHOE</div>
         <div class="rule-row"><span>6 decks</span></div>
-        <div class="rule-row"><span>Reshuffled at &lt;52 cards</span></div>
+        <div class="rule-row"><span>Reshuffled &lt;52 cards</span></div>
       </div>
+    </div>
+  </div>
 
-      <div class="rule-section">
-        <div class="rule-section-head">OPTIONS</div>
-        <div class="rule-row rule-toggle-row">
-          <span>5 Card Charlie</span>
-          <label class="toggle-switch">
-            <input type="checkbox" id="charlie-toggle" onchange="toggleCharlie()">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
-        <div id="charlie-note" class="rule-note hidden">
-          5 cards without busting = instant win (1:1)
-        </div>
-      </div>
-    </aside>
-
-  </div><!-- #app -->
-
+  <script src="/static/socket.io.min.js"></script>
   <script src="/static/game.js"></script>
 </body>
 </html>

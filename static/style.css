@@ -26,10 +26,9 @@ body {
 
 #app {
   width: 100%;
-  max-width: 1060px;
+  max-width: 860px;
   display: flex;
-  flex-direction: row;
-  align-items: stretch;
+  flex-direction: column;
   min-height: 100vh;
 }
 
@@ -50,6 +49,28 @@ header {
   border-bottom: 2px solid var(--gold);
   letter-spacing: 0.05em;
 }
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.rules-btn {
+  padding: 6px 14px;
+  font-family: 'Georgia', serif;
+  font-size: 0.72rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 5px;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.rules-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
 .logo {
   font-size: 1.4rem;
@@ -237,12 +258,6 @@ header {
 .tag-blackjack { background: var(--gold); color: #000; }
 
 /* ── Action Buttons ───────────────────────────────────────────── */
-#action-buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .action-btn {
   padding: 10px 22px;
   font-family: 'Georgia', serif;
@@ -271,12 +286,6 @@ header {
 }
 
 /* ── Round-over Buttons ───────────────────────────────────────── */
-#round-over-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
 .round-btn {
   padding: 11px 28px;
   font-family: 'Georgia', serif;
@@ -387,22 +396,6 @@ header {
 .bet-ctrl-btn.primary:hover { filter: brightness(1.1); }
 
 /* ── Result Banner ────────────────────────────────────────────── */
-#result-banner {
-  background: rgba(0,0,0,0.55);
-  border-top: 2px solid var(--gold);
-  border-bottom: 2px solid var(--gold);
-  padding: 14px 24px;
-  text-align: center;
-}
-
-#result-rows {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  flex-wrap: wrap;
-  margin-bottom: 6px;
-}
-
 .result-pill {
   padding: 5px 16px;
   border-radius: 20px;
@@ -415,12 +408,6 @@ header {
 .result-pill.loss      { background: #a93226; color: #fff; }
 .result-pill.push      { background: rgba(255,255,255,0.15); color: #fff; }
 .result-pill.blackjack { background: var(--gold); color: #000; }
-
-#round-net-line {
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.7);
-  margin-top: 4px;
-}
 
 /* ── Message Bar ──────────────────────────────────────────────── */
 #message-bar {
@@ -436,27 +423,56 @@ header {
   letter-spacing: 0.05em;
 }
 
-/* ── Rulebook Sidebar ─────────────────────────────────────────── */
-#rulebook {
-  width: 210px;
-  flex-shrink: 0;
-  background: rgba(0,0,0,0.28);
-  border-left: 1px solid rgba(255,255,255,0.1);
-  padding: 20px 14px;
+/* ── Rules modal ──────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 20px;
+}
+
+.modal-card {
+  background: #1a2e1e;
+  border: 1px solid rgba(201,162,39,0.5);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 340px;
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.rulebook-title {
-  font-size: 0.65rem;
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(201,162,39,0.35);
+}
+
+.modal-title {
+  font-size: 0.72rem;
   letter-spacing: 0.2em;
   color: var(--gold);
   font-weight: bold;
-  text-align: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(201,162,39,0.35);
 }
+
+.modal-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.modal-close:hover { color: #fff; }
 
 .rule-section {
   display: flex;
@@ -476,7 +492,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
   color: rgba(255,255,255,0.75);
   gap: 6px;
 }
@@ -489,59 +505,252 @@ header {
 
 .rule-val.gold { color: var(--gold); }
 
-.rule-toggle-row {
-  align-items: center;
-}
-
-.rule-note {
-  font-size: 0.62rem;
-  color: rgba(255,255,255,0.45);
-  line-height: 1.4;
-  margin-top: 2px;
-}
-
-/* ── Toggle Switch ────────────────────────────────────────────── */
-.toggle-switch {
-  position: relative;
-  display: inline-block;
-  width: 38px;
-  height: 21px;
-  flex-shrink: 0;
-  cursor: pointer;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-slider {
-  position: absolute;
-  inset: 0;
-  background: rgba(255,255,255,0.18);
-  border-radius: 21px;
-  transition: background 0.25s;
-}
-
-.toggle-slider::before {
-  content: '';
-  position: absolute;
-  height: 15px;
-  width: 15px;
-  left: 3px;
-  bottom: 3px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform 0.25s;
-}
-
-input:checked + .toggle-slider { background: var(--gold); }
-input:checked + .toggle-slider::before { transform: translateX(17px); }
-
 /* ── Charlie tag & pill ───────────────────────────────────────── */
 .tag-charlie { background: #16a085; color: #fff; }
 .result-pill.charlie { background: #16a085; color: #fff; }
 
 /* ── Utility ──────────────────────────────────────────────────── */
 .hidden { display: none !important; }
+
+/* ── Lobby ────────────────────────────────────────────────────── */
+#lobby {
+  position: fixed;
+  inset: 0;
+  background: var(--felt-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+#lobby-card {
+  background: rgba(0,0,0,0.55);
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  min-width: 320px;
+}
+
+.lobby-logo {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--gold);
+  letter-spacing: 0.08em;
+}
+
+.lobby-subtitle {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.15em;
+}
+
+.lobby-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  color: #fff;
+  text-align: center;
+  outline: none;
+}
+
+.lobby-input:focus { border-color: var(--gold); }
+
+.lobby-btn {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Georgia', serif;
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.lobby-btn:hover { filter: brightness(1.1); }
+
+.lobby-error {
+  font-size: 0.78rem;
+  color: #e74c3c;
+  text-align: center;
+}
+
+/* ── Seats row ────────────────────────────────────────────────── */
+#seats-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* ── Seat card ────────────────────────────────────────────────── */
+.seat-card {
+  background: rgba(0,0,0,0.25);
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 130px;
+  max-width: 260px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.seat-card.my-seat {
+  border-color: rgba(201,162,39,0.5);
+}
+
+.seat-card.active-seat {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px rgba(201,162,39,0.3);
+}
+
+.seat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.seat-name {
+  font-size: 0.78rem;
+  font-weight: bold;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.seat-bankroll {
+  font-size: 0.68rem;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.seat-bet {
+  font-size: 0.68rem;
+  font-weight: bold;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.1em;
+}
+
+.seat-bet.waiting-bet { color: rgba(255,255,255,0.3); }
+.seat-bet.ready-bet   { color: #2ecc71; }
+
+/* ── Seat hand ────────────────────────────────────────────────── */
+.seat-hand {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.seat-hand.active-hand {
+  border-color: var(--gold);
+  background: rgba(201,162,39,0.07);
+}
+
+.seat-hand.resolved-hand {
+  opacity: 0.65;
+}
+
+.seat-hand-label {
+  font-size: 0.62rem;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.06em;
+}
+
+.seat-hand-label .hand-value {
+  color: #fff;
+  font-weight: bold;
+}
+
+.soft-tag {
+  opacity: 0.6;
+  font-size: 0.9em;
+}
+
+/* ── Seat results ─────────────────────────────────────────────── */
+.seat-results {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.seat-results .result-pill {
+  font-size: 0.62rem;
+  padding: 2px 8px;
+}
+
+/* ── Mini cards (other players' seats) ───────────────────────── */
+.card.mini {
+  --card-w: 46px;
+  --card-h: 66px;
+  width: var(--card-w);
+  height: var(--card-h);
+}
+
+.card.mini .corner     { font-size: 0.5rem; }
+.card.mini .center-suit { font-size: 1rem; }
+
+/* ── Controls area ────────────────────────────────────────────── */
+#action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 24px;
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+#round-over-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+#result-banner {
+  background: rgba(0,0,0,0.55);
+  border-top: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  padding: 14px 24px;
+  text-align: center;
+}
+
+#result-rows {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+#round-net-line {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+}
+
+#round-over-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 24px;
+  background: rgba(0,0,0,0.3);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
