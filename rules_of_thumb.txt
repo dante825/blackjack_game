@@ -1,0 +1,19 @@
+There's no rule that forces a player to stand at any point — you can hit as many times as you want until you either bust (go over 21) or choose to stand yourself.
+
+  That said, basic strategy (the mathematically optimal play) gives general guidelines:
+
+  ┌─────────────┬──────────────────────────────────────────┐
+  │  Your hand  │            Recommended action            │
+  ├─────────────┼──────────────────────────────────────────┤
+  │ 17+         │ Always stand                             │
+  ├─────────────┼──────────────────────────────────────────┤
+  │ 13–16       │ Stand if dealer shows 2–6, otherwise hit │
+  ├─────────────┼──────────────────────────────────────────┤
+  │ 12          │ Stand if dealer shows 4–6, otherwise hit │
+  ├─────────────┼──────────────────────────────────────────┤
+  │ 11 or below │ Always hit (can't bust on one card)      │
+  └─────────────┴──────────────────────────────────────────┘
+
+  The logic is based on the dealer's visible card — since the dealer must hit until 17, a low dealer card (2–6) means they're likely to bust, so you stand and let them self-destruct.
+
+  It's purely the player's decision in the game — the HIT/STAND buttons are always available to you (as long as you're under 21).
